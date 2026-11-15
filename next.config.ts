@@ -1,14 +1,21 @@
 import type { NextConfig } from "next";
 
 const backendUrl = process.env.FASTAPI_BACKEND_URL || 'http://127.0.0.1:8000';
+const isGithubPages = process.env.GITHUB_PAGES === 'true';
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
+  ...(isGithubPages ? {
+    output: 'export',
+    basePath: '/flame-in-freefall',
+    images: { unoptimized: true },
+  } : {}),
   experimental: {
     optimizePackageImports: ["lucide-react", "recharts"],
   },
   async rewrites() {
+    if (isGithubPages) return [];
     return [
       {
         source: '/api/research-bot/:path*',

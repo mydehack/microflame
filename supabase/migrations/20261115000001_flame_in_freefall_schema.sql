@@ -378,3 +378,4 @@ on conflict (id) do update set
   specific_impulse = excluded.specific_impulse,
   exit_velocity = excluded.exit_velocity,
   source_publication = excluded.source_publication;
+
