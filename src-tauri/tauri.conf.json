@@ -1,0 +1,65 @@
+{
+  "$schema": "https://raw.githubusercontent.com/tauri-apps/tauri/dev/tooling/cli/schema.json",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build",
+    "devPath": "http://localhost:3000",
+    "distDir": "../out"
+  },
+  "package": {
+    "productName": "Flame in Freefall",
+    "version": "2.4.0"
+  },
+  "tauri": {
+    "allowlist": {
+      "all": false,
+      "fs": {
+        "all": true,
+        "scope": ["$APPDATA/*", "$DOWNLOAD/*", "$DESKTOP/*"]
+      },
+      "dialog": {
+        "all": true,
+        "save": true,
+        "open": true
+      },
+      "shell": {
+        "all": false,
+        "open": true
+      }
+    },
+    "bundle": {
+      "active": true,
+      "category": "Science",
+      "copyright": "2026 Flame in Freefall Multidisciplinary Team",
+      "identifier": "gov.nasa.combustion.flameinfreefall",
+      "icon": [
+        "icons/32x32.png",
+        "icons/128x128.png",
+        "icons/icon.icns",
+        "icons/icon.ico"
+      ],
+      "shortDescription": "Scientific Combustion Research and Microgravity Simulation Platform",
+      "windows": {
+        "certificateThumbprint": null,
+        "digestAlgorithm": "sha256",
+        "timestampUrl": ""
+      }
+    },
+    "security": {
+      "csp": null
+    },
+    "windows": [
+      {
+        "title": "Flame in Freefall — Scientific Microgravity Combustion Research",
+        "width": 1440,
+        "height": 900,
+        "resizable": true,
+        "fullscreen": false,
+        "transparent": false,
+        "decorations": true,
+        "center": true
+      }
+    ]
+  }
+}
+
