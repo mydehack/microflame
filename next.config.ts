@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   ...(isGithubPages ? {
     output: 'export',
-    basePath: '/flame-in-freefall',
+    basePath: '/microflame',
     images: { unoptimized: true },
   } : {}),
   experimental: {
