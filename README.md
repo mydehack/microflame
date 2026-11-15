@@ -1,49 +1,170 @@
-# CampusConnect AI
+# Flame in Freefall — NASA-Based Thruster Engine Explorer & Scientific Propulsion Platform
 
-CampusConnect AI is a student networking application built with Next.js App Router, TypeScript, Tailwind CSS, Supabase Auth/Postgres/Storage, and a server-side AI mentor adapter. The original Northstar static files remain in the repository; the application runs from the Next.js `app/` tree.
+[![Next.js 16](https://img.shields.io/badge/Next.js-16.4.2-black?logo=next.js)](https://nextjs.org/)
+[![React 19](https://img.shields.io/badge/React-19-blue?logo=react)](https://react.dev/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-teal?logo=fastapi)](https://fastapi.tiangolo.com/)
+[![Groq AI](https://img.shields.io/badge/Groq-AI%20Inference-orange)](https://groq.com/)
+[![Supabase](https://img.shields.io/badge/Supabase-Database%20%26%20Storage-emerald?logo=supabase)](https://supabase.com/)
+[![NASA Open Science](https://img.shields.io/badge/NASA-CEA%20%26%20NTRS-red?logo=nasa)](https://ntrs.nasa.gov/)
 
-## Current implementation
+**Flame in Freefall** is a scientific research and simulation web application for studying microgravity combustion physics, rocket propulsion thermodynamics, supersonic thruster exhaust plumes, and spacecraft reaction mechanisms.
 
-The application includes password registration and login with username, college, and password; onboarding; public/private profiles; profile field visibility; verified recovery-email enrollment and password reset; follows and private follow requests; connections; persisted create/edit/delete posts, likes, comments, and saved-post records; a structured student matching baseline; private AI mentor conversations; editable goals and milestones; communities with private join approvals; text messaging with periodic polling; notifications; blocking/reporting; and account deletion with session revocation and owned media cleanup.
+---
 
-The official AI account is created by the idempotent `seed:platform` command. Database onboarding creates both follow edges exactly once when each student account is inserted. User-controlled metadata cannot grant the AI account type or badge.
+## 🚀 Key Architectural Capabilities
 
-This is a functional foundation, not a claim that every item in the original product brief is complete. In particular, human match ranking is structured and deterministic; semantic embeddings and discovery filters, match notifications, AI-account notifications, post media and feed pagination, saved-post browsing, generated connection starters, community resources/events/tasks, realtime message delivery/read receipts, moderation tooling, and scheduled n8n workflows still need implementation. Messages are stored and sent through the database, and the UI refreshes them every 12 seconds. AI mentor calls and password recovery require server credentials and show useful configuration errors when unavailable. No real Supabase project or mail/AI credentials are included.
+### 1. Supersonic Thruster Exhaust Visualization
+- **Procedural Real-Time Physics Canvas**: Renders realistic rocket thruster plume physics on an unobstructed canvas.
+- **Aerodynamic Shock Structures**: Dynamically visualizes expansion fans, compression waves, Mach discs, and periodic shock diamonds as chamber pressure and ambient atmospheric/vacuum conditions vary.
+- **Color Temperature Regimes**: Physically modeled emission gradients covering hypergolic, cryogenic LH2/LOX (deep blue/UV), methane/RP-1 (bright amber/orange soot), and ion/plasma electric propulsion (xenon cyan).
 
-## Requirements
+### 2. NASA Engine Catalog & CEA Thermodynamics
+- **10 Verified NASA Flight Engines**: Complete technical records, chamber pressures, expansion ratios, and citations for RS-25 (SSME), RL10B-2, F-1, Merlin 1D Vac, J-2X, Raptor Vacuum, AJ10-190, NSTAR Ion, RD-180, and RS-68.
+- **NASA CEA Solver**: Chemical Equilibrium with Applications (CEA) calculates gas-phase equilibrium composition, characteristic velocity ($C^*$), thrust coefficient ($C_F$), and vacuum specific impulse ($I_{sp}$).
+- **NASA Technical Report Server (NTRS) Gateway**: Live search across NASA propulsion documents and technical memoranda.
 
-- Node.js 20.9 or newer (the project is pinned to Next.js 16).
-- A Supabase project with Auth, Postgres, and Storage enabled.
-- Supabase CLI for applying and validating migrations.
-- Optional: an OpenAI-compatible AI API, n8n webhook endpoints, and a Resend account for recovery email.
+### 3. Groq-Powered AI Scientific Research Bot
+- **High-Speed Inference**: Sub-second latency responses powered by Groq LPUs (`openai/gpt-oss-120b`).
+- **Adaptive Personas**:
+  - **Beginner**: Conceptual guidance, intuitive analogies, and plain-English explanations.
+  - **Guided**: Intermediate analysis connecting physical parameters to observed simulation results.
+  - **Expert / Flight Engineer**: Rigorous propulsion thermodynamics, equilibrium species dissociation, and quantitative validation.
 
-## Local setup
+### 4. Smart Hover Guide System
+- Context-aware tooltips and explanations active exclusively for the **Beginner** role.
+- Explains 20+ propulsion and simulation parameters (equivalence ratio $\phi$, Grashof number $Gr$, chamber pressure, expansion ratio $\epsilon$) without cluttering the clean interface for Researchers.
 
-1. Install dependencies with `npm install`.
-2. Copy `.env.example` to `.env.local` and fill in `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, and the server-only `SUPABASE_SERVICE_ROLE_KEY`. Do not prefix the service role key with `NEXT_PUBLIC_` or commit `.env.local`.
-3. Install the Supabase CLI using the official instructions, authenticate with `supabase login`, and link the project with `supabase link --project-ref <your-project-ref>`.
-4. Apply the migrations with `supabase db push`. For a local Supabase stack, run `supabase start`, then `supabase db reset`.
-5. Seed the platform account with `npm run seed:platform`. This command uses the service role key only on the server and is safe to re-run.
-6. Start the app with `npm run dev` and open `http://localhost:3000`.
+### 5. Supabase Cloud Persistence & Storage Suite
+- **11 Relational Entities**: Profiles, engines, experiments, simulation runs, simulation results, saved configurations, comparisons, research documents, conversations, messages, and reports.
+- **Row Level Security (RLS)**: Enforced across all tables so users only access their authorized research data.
+- **4 Dedicated Cloud Storage Buckets**:
+  - `research-documents`: Technical papers, PDFs, and notes.
+  - `simulation-exports`: CSV datasets, tabular time-series, and project `.fif.json` archives.
+  - `generated-reports`: Formatted scientific memoranda and analysis summaries.
+  - `visualization-exports`: Lossless 4K plume renders and 3D glTF/JSON geometry files.
 
-The migration files use timestamped Supabase CLI-compatible names. They were authored directly because the CLI was unavailable in the build environment, so review them and run `supabase db reset` against a disposable local project before applying them to a hosted project.
+---
 
-## Authentication model
+## 🛠️ Tech Stack & Architecture
 
-The registration screen collects a full name, college, username, and password. Supabase Auth stores the password hash. The server creates a confirmed Auth user with an internal non-deliverable `.invalid` email derived from the unique username, then establishes the cookie session. A database trigger requires server-managed `app_metadata` for account creation, so the public client cannot bypass registration and mint student or AI roles with editable user metadata. College is profile information and is checked as an additional sign-in detail; it is not treated as proof of enrollment. Ordinary password login does not use OTP. Students can enroll a separate recovery email in Settings; an expiring, single-use verification code confirms it before that email can be used for password reset.
+```
+┌────────────────────────────────────────────────────────┐
+│                   NEXT.JS 16 FRONTEND                  │
+│    (React 19, Tailwind CSS, Lucide Icons, Recharts)    │
+│                 Port: 3000 (Local / Vercel)            │
+└───────────────┬────────────────────────┬───────────────┘
+                │                        │
+       REST / Auth / Storage             │ Next.js Rewrites
+                │                        ▼
+┌───────────────▼──────────────┐ ┌────────────────────────┐
+│      SUPABASE CLOUD          │ │    FASTAPI BACKEND     │
+│  PostgreSQL (11 Tables, RLS) │ │ (Python, CEA Solver,   │
+│  Storage (4 Buckets)         │ │  NTRS Gateway)         │
+│  Auth (JWT Sessions)         │ │ Port: 8000             │
+└──────────────────────────────┘ └───────────┬────────────┘
+                                             │
+                                             ▼
+                                 ┌────────────────────────┐
+                                 │     GROQ CLOUD AI      │
+                                 │  (LPU High-Speed LLM   │
+                                 │   gpt-oss-120b)        │
+                                 └────────────────────────┘
+```
 
-For production, configure Supabase Auth password-strength and abuse protections, keep all server secrets in the deployment environment, and configure a verified recovery email sender before opening registration broadly. Recovery uses the Resend email API; set a verified sender address, API key, and a random `RECOVERY_CODE_SECRET` with at least 32 characters. The application has a database-backed rate limiter for registration/login and social write endpoints; keep Supabase Auth's own sign-in rate limits enabled because clients can call Auth endpoints directly. Supabase access tokens are stateless and remain usable until expiry even after refresh-session revocation, so set a short, appropriate JWT lifetime in the project.
+---
 
-## Environment variables
+## ⚙️ Local Development Setup
 
-See `.env.example`. AI configuration is optional. Supported AI settings are `AI_PROVIDER=openai`, `AI_API_KEY`, `AI_MODEL`, and optional `AI_BASE_URL`. The server calls the configured OpenAI-compatible Chat Completions endpoint; no AI key reaches the browser. Password recovery requires `RESEND_API_KEY`, a verified `RESEND_FROM_EMAIL`, and a random `RECOVERY_CODE_SECRET` of at least 32 characters. Recovery codes are HMAC-hashed in the database, single-use, and expire after ten minutes. See the [Resend email API](https://resend.com/features/email-api) for sender setup.
+### Prerequisites
+- Node.js >= 20.9.0
+- Python >= 3.10
+- Git
 
-The app sends signed, best-effort new-student and onboarding events when `N8N_NEW_STUDENT_WEBHOOK_URL` and `N8N_WEBHOOK_SECRET` are configured. The goal-reminder and weekly-review environment slots are reserved but the corresponding scheduled workflows are not implemented. The core application does not depend on n8n.
+### 1. Clone & Install Dependencies
+```bash
+# Install frontend packages
+npm install
 
-## Checks
+# Install Python backend packages
+pip install -r backend/requirements.txt
+```
 
-Run `npm run typecheck`, `npm run lint`, and `npm test` after installing dependencies. `lib/matching.test.ts` covers ranking and eligibility filters. This workspace could not download packages from the npm registry, so `package-lock.json` could not be generated. Dependency installation, TypeScript, lint, Vitest, Next build, Supabase migration application, and end-to-end auth/RLS checks have not been run here. Node syntax checks, a direct matching smoke check, internal import-path resolution, and migration filename/RLS coverage checks did pass.
+### 2. Environment Configuration
+Copy `.env.example` to `.env`:
+```bash
+cp .env.example .env
+```
+Fill in your credentials:
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://<your-project-id>.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-publishable-key>
+SUPABASE_SERVICE_ROLE_KEY=<your-service-role-secret-key>
+GROQ_API_KEY=<your-groq-api-key>
+GROQ_MODEL=openai/gpt-oss-120b
+NASA_API_KEY=DEMO_KEY
+FASTAPI_BACKEND_URL=http://127.0.0.1:8000
+```
 
-## Deployment
+### 3. Start Backend & Frontend
+```bash
+# Terminal 1: FastAPI Python Backend
+python -m uvicorn backend.main:app --host 127.0.0.1 --port 8000
 
-Deploy the Next.js app to Vercel and add the same variables from `.env.example` in the project environment settings. Apply reviewed migrations to the linked Supabase project, run `npm run seed:platform` once (or again safely), set the production Supabase Auth site URL to the Vercel domain, and confirm storage buckets and RLS policies exist. Keep AI and service-role credentials in server-only Vercel environment variables. Verify the signup, private-account access, account deletion, and storage policies with separate test users before enabling public registration.
+# Terminal 2: Next.js Frontend
+npm run dev
+# Or for production:
+npm run build && npm run start
+```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+---
+
+## 🧪 Verification & Health Checks
+
+Verify all systems with standard checks:
+```bash
+# TypeScript Typecheck
+npm run typecheck
+
+# Next.js Production Build
+npm run build
+
+# FastAPI Backend Health Check
+curl http://127.0.0.1:8000/api/health
+
+# Groq AI Model & Research Bot Status
+curl http://127.0.0.1:8000/api/research-bot/health
+
+# NASA Engine Catalogue Check
+curl http://127.0.0.1:8000/api/engines
+```
+
+---
+
+## 🚢 Production Deployment
+
+### Frontend Deployment (Vercel)
+1. Link your GitHub repository to Vercel.
+2. Configure Environment Variables in the Vercel Dashboard:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `SUPABASE_SERVICE_ROLE_KEY`
+   - `FASTAPI_BACKEND_URL`
+3. Build Command: `npm run build`
+4. Output Directory: `.next`
+
+### Backend Deployment (Render / Railway / Cloud Run)
+1. Deploy `backend/main.py` using `Dockerfile` or Python runtime:
+   - Command: `uvicorn backend.main:app --host 0.0.0.0 --port $PORT`
+2. Configure Environment Variables:
+   - `GROQ_API_KEY`
+   - `GROQ_MODEL`
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `SUPABASE_SERVICE_ROLE_KEY`
+
+---
+
+## 🔒 Security Best Practices
+- **Never commit `.env` or API tokens**: Enforced in `.gitignore`.
+- **Row Level Security**: All database tables enforce strict tenant isolation via `auth.uid() = user_id`.
+- **Public vs Secret Clients**: The browser client (`lib/supabase/client.ts`) uses the public anon key. The administrative client (`lib/supabase/admin.ts`) uses the `service_role` key exclusively in protected server-side routes.
